@@ -332,8 +332,32 @@ public class GameController : MonoBehaviour {
         for (int x = 0; x < Helper.WIDTH; x++)
         {
             int x0 = (x + 3) % Helper.WIDTH;
-            RowDown(y, x0);
+            RowDown(y, x0, -Vector3.up);
             yield return new WaitForSeconds(0.01f);
+        }
+        for (int x = 0; x < Helper.WIDTH; x++)
+        {
+            int x0 = (x + 3) % Helper.WIDTH;
+            RowMove(y, x0, Vector3.up * 0.3f);
+            yield return new WaitForSeconds(0.005f);
+        }
+        for (int x = 0; x < Helper.WIDTH; x++)
+        {
+            int x0 = (x + 3) % Helper.WIDTH;
+            RowMove(y, x0, -Vector3.up * 0.3f);
+            yield return new WaitForSeconds(0.005f);
+        }
+        for (int x = 0; x < Helper.WIDTH; x++)
+        {
+            int x0 = (x + 3) % Helper.WIDTH;
+            RowMove(y, x0, Vector3.up * 0.08f);
+            yield return new WaitForSeconds(0.005f);
+        }
+        for (int x = 0; x < Helper.WIDTH; x++)
+        {
+            int x0 = (x + 3) % Helper.WIDTH;
+            RowMove(y, x0, -Vector3.up * 0.08f);
+            yield return new WaitForSeconds(0.005f);
         }
         isRowDown = false;
     }
@@ -364,7 +388,7 @@ public class GameController : MonoBehaviour {
         isRowDown = false;
     }
 
-    void RowDown(int deletedLine, int deletedCol)
+    void RowDown(int deletedLine, int deletedCol, Vector3 direction)
     {
         print("rowdown");
 
@@ -379,8 +403,22 @@ public class GameController : MonoBehaviour {
                 {
                     grid[y - 1, x] = grid[y, x];
                     grid[y, x] = null;
-                    grid[y - 1, x].transform.position -= Vector3.up;
+                    grid[y - 1, x].transform.position += direction;
                 }
+        }
+    }
+
+    void RowMove(int deletedLine, int deletedCol, Vector3 direction)
+    {
+        print("rowdown");
+
+        int x = deletedCol;
+        for (int y = deletedLine; y < Helper.HEIGHT; y++)
+        {
+            if (grid[y, x] != null)
+            {
+                grid[y, x].transform.position += direction;
+            }
         }
     }
 
