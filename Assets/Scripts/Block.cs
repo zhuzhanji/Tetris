@@ -11,5 +11,6 @@ public class Block: MonoBehaviour
         foreach (Transform children in this.transform) {
             Destroy(children.gameObject);
         }
+        Destroy(gameObject);
     }
 }
