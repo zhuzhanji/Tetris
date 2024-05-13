@@ -36,13 +36,13 @@ public class GameController : MonoBehaviour {
     private Block[,] grid = new Block[Helper.HEIGHT, Helper.WIDTH];
 
     public TetrisBlock[] Blocks;
-    
+    public TetrisBlock[] deadBlock;
+
     public GhostBlock[] Ghosts;
     private int nextBlock;
     private int nextRot;
     public TetrisBlock nextBlockObject;
     public TetrisBlock currBlock;
-    public TetrisBlock deadBlock;
     public GameObject nextBlockBackground, infoText, restartButton, resumeButton, pauseButton, speakerButton, muteButton;
     public GemBlock gemBlock;
     private GhostBlock ghostBlock;
@@ -120,6 +120,10 @@ public class GameController : MonoBehaviour {
         //nextBlockObject.transform.parent.localRotation = rot;
         nextBlockObject.transform.RotateAround(nextBlockObject.transform.TransformPoint(nextBlockObject.rotationPoint), Vector3.forward, nextRot);
         print("nextblock end");
+        foreach (Transform child in nextBlockObject.transform)
+        {
+            child.transform.Rotate(new Vector3(0, 0, -nextRot));
+        }
     }
 
     void SetStage() {
@@ -132,7 +136,7 @@ public class GameController : MonoBehaviour {
                         grid[y, x] = null;
                         break;
                     case 1:
-                        grid[y, x] = Instantiate(deadBlock, new Vector3(x, y, 0), Quaternion.identity);
+                        grid[y, x] = Instantiate(deadBlock[0], new Vector3(x, y, 0), Quaternion.identity);
                         break;
                     case 2:
                         numGems++;
@@ -197,14 +201,26 @@ public class GameController : MonoBehaviour {
     }
 
     void Rotate() {
+        int degree = 90;
         Transform currTransform = currBlock.transform;
-        currTransform.RotateAround(currTransform.TransformPoint(currBlock.rotationPoint), Vector3.forward, 90);
-        ghostBlock.transform.RotateAround(ghostBlock.transform.TransformPoint(currBlock.rotationPoint), Vector3.forward, 90);
+        currTransform.RotateAround(currTransform.TransformPoint(currBlock.rotationPoint), Vector3.forward, degree);
+        ghostBlock.transform.RotateAround(ghostBlock.transform.TransformPoint(currBlock.rotationPoint), Vector3.forward, degree);
+
+        
 
         if (!ValidMove(currBlock.transform)) {
-            currTransform.RotateAround(currTransform.TransformPoint(currBlock.rotationPoint), Vector3.forward, -90);
-            ghostBlock.transform.RotateAround(ghostBlock.transform.TransformPoint(currBlock.rotationPoint), Vector3.forward, -90);
+            currTransform.RotateAround(currTransform.TransformPoint(currBlock.rotationPoint), Vector3.forward, -degree);
+            ghostBlock.transform.RotateAround(ghostBlock.transform.TransformPoint(currBlock.rotationPoint), Vector3.forward, -degree);
+            degree = 0;
+        }
 
+        foreach (Transform child in currTransform.transform)
+        {
+            child.transform.Rotate(new Vector3(0, 0, -degree));
+        }
+        foreach (Transform child in ghostBlock.transform)
+        {
+            child.transform.Rotate(new Vector3(0, 0, -degree));
         }
     }
 
@@ -231,8 +247,9 @@ public class GameController : MonoBehaviour {
             int roundedX = Mathf.RoundToInt(children.transform.position.x);
             Color currColor = children.GetComponent<SpriteRenderer>().color;
             if (grid[roundedY, roundedX] == null) {
-                TetrisBlock curr = Instantiate(deadBlock, new Vector3(roundedX, roundedY, 0), Quaternion.identity);
-                curr.sprite.GetComponent<SpriteRenderer>().color = currColor;
+                Debug.Log("CreateDeadBlock()" + currBlock.deadBlockIndex);
+                TetrisBlock curr = Instantiate(deadBlock[currBlock.deadBlockIndex], new Vector3(roundedX, roundedY, 0), Quaternion.identity);
+                //curr.sprite.GetComponent<SpriteRenderer>().color = new Color(1,0,0);
                 grid[roundedY, roundedX] = curr;
             }
         }
@@ -271,7 +288,10 @@ public class GameController : MonoBehaviour {
         print("EndTurn");
         FindObjectOfType<AudioManager>().Play("Blip");
         hardDropped = true;
+        Debug.Log("EndTurn");
         foreach (var y in deletingRow) {
+            Debug.Log("deletingRow" + y) ;
+
             StartCoroutine(DeleteLine(y));
             StartCoroutine(WaitForRowDown(y));
         }
@@ -294,7 +314,7 @@ public class GameController : MonoBehaviour {
                 StartCoroutine(DeleteLineEffect(grid[y, x], destroyedBlocks));
             }
         }
-
+        print("deleteline 1");
         while (destroyedBlocks[0] < 10) {
             yield return new WaitForSeconds(0.1f);
         }
@@ -304,6 +324,7 @@ public class GameController : MonoBehaviour {
             grid[y, x].Destroy();
             grid[y, x] = null;
         }
+        print("deleteline 2");
         isDestroying = false;
         destroyedBlocks[0] = 0;
     }
@@ -448,7 +469,10 @@ public class GameController : MonoBehaviour {
         print("newblock start");
         currBlock = Instantiate(Blocks[nextBlock], startPos, Quaternion.identity);
         currBlock.transform.RotateAround(currBlock.transform.TransformPoint(currBlock.rotationPoint), Vector3.forward, nextRot);
-
+        foreach (Transform child in currBlock.transform)
+        {
+            child.transform.Rotate(new Vector3(0, 0, -nextRot));
+        }
 
         NewGhost();
         NextBlock();
@@ -474,7 +498,10 @@ public class GameController : MonoBehaviour {
             ghostBlock = Instantiate(Ghosts[nextBlock], currBlock.transform.position, Quaternion.identity);
         }
         ghostBlock.transform.RotateAround(ghostBlock.transform.TransformPoint(ghostBlock.rotationPoint), Vector3.forward, nextRot);
-
+        foreach(Transform child in ghostBlock.transform)
+        {
+            child.transform.Rotate(new Vector3(0,0,-nextRot));
+        }
         print("newghostend");
 }
 

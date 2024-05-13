@@ -6,7 +6,7 @@ public class Block: MonoBehaviour
 {
     public Vector3 rotationPoint;
     public SpriteRenderer sprite;
-    
+    public int deadBlockIndex;
     public void Destroy() {
         foreach (Transform children in this.transform) {
             Destroy(children.gameObject);
