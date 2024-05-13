@@ -9,6 +9,12 @@ This is a project based on hyunuk/Tetris.
 * Random rotation of shapes
 * Asynchronous dropping down and spring-like collision after row elimination.
 
+
+
+https://github.com/zhuzhanji/Tetris/assets/37281560/c12fa398-3957-4f76-a2bb-d6f2181ac1a8
+
+
+
 ## Main Features
 ### Stage / Infinity Mode
 The game can start with two different modes. Infinity mode is a classic one, but in the Stage mode, you need to find and clear gems (the orange blocks) to clear the stage and go to the next level.
