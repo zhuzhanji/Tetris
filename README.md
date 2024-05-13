@@ -3,8 +3,9 @@
 This is a project based on hyunuk/Tetris.
 
 ## New Features
-* Optimised block outlook 
-![Square_stone_icon_button_background](https://github.com/zhuzhanji/Tetris/assets/37281560/35687c64-7a23-4d87-b927-20c3a545d6c7)
+* Optimised block outlook
+
+<img src="https://github.com/zhuzhanji/Tetris/assets/37281560/35687c64-7a23-4d87-b927-20c3a545d6c7" width="600" height="600" />
 
 * Random rotation of shapes
 * Asynchronous dropping down and spring-like collision after row elimination.
