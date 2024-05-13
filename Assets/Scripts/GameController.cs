@@ -39,6 +39,7 @@ public class GameController : MonoBehaviour {
     
     public GhostBlock[] Ghosts;
     private int nextBlock;
+    private int nextRot;
     public TetrisBlock nextBlockObject;
     public TetrisBlock currBlock;
     public TetrisBlock deadBlock;
@@ -108,10 +109,16 @@ public class GameController : MonoBehaviour {
         while (deck.Contains(nextBlock));
         deck.Add(nextBlock);
 
+        int[] rots = { 0, 90, 180, -90};
+        int rot = rots[Random.Range(0, 4)];
+        nextRot = rot;
+
         if (nextBlockObject != null) nextBlockObject.Destroy();
         nextBlockObject = Instantiate(Blocks[nextBlock]);
         nextBlockObject.transform.parent = nextBlockBackground.transform;
         nextBlockObject.transform.localPosition = Pivots[nextBlock];
+        //nextBlockObject.transform.parent.localRotation = rot;
+        nextBlockObject.transform.RotateAround(nextBlockObject.transform.TransformPoint(nextBlockObject.rotationPoint), Vector3.forward, nextRot);
         print("nextblock end");
     }
 
@@ -274,6 +281,11 @@ public class GameController : MonoBehaviour {
 
     private IEnumerator DeleteLine(int y) {
         print("deleteline");
+        while (isRowDown)
+        {
+            yield return new WaitForSeconds(0.01f);
+        }
+
         isDestroying = true;
         int[] destroyedBlocks = new int[1];
         destroyedBlocks[0] = 0;
@@ -315,7 +327,15 @@ public class GameController : MonoBehaviour {
         while (isDestroying) {
             yield return new WaitForSeconds(0.01f);
         }
-        RowDown(y);
+
+        isRowDown = true;
+        for (int x = 0; x < Helper.WIDTH; x++)
+        {
+            int x0 = (x + 3) % Helper.WIDTH;
+            RowDown(y, x0);
+            yield return new WaitForSeconds(0.01f);
+        }
+        isRowDown = false;
     }
 
     private IEnumerator WaitForNewBlock() {
@@ -344,6 +364,26 @@ public class GameController : MonoBehaviour {
         isRowDown = false;
     }
 
+    void RowDown(int deletedLine, int deletedCol)
+    {
+        print("rowdown");
+
+        int x = deletedCol;
+        for (int y = deletedLine; y < Helper.HEIGHT; y++)
+        {
+                if (y == deletedLine)
+                {
+                    grid[y, x] = null;
+                }
+                if (grid[y, x] != null)
+                {
+                    grid[y - 1, x] = grid[y, x];
+                    grid[y, x] = null;
+                    grid[y - 1, x].transform.position -= Vector3.up;
+                }
+        }
+    }
+
     bool ValidMove(Transform transform) {
         foreach (Transform children in transform) {
             int roundedY = Mathf.RoundToInt(children.transform.position.y);
@@ -369,6 +409,9 @@ public class GameController : MonoBehaviour {
     private void NewBlock() {
         print("newblock start");
         currBlock = Instantiate(Blocks[nextBlock], startPos, Quaternion.identity);
+        currBlock.transform.RotateAround(currBlock.transform.TransformPoint(currBlock.rotationPoint), Vector3.forward, nextRot);
+
+
         NewGhost();
         NextBlock();
         isShowingAnimation = false;
@@ -392,6 +435,8 @@ public class GameController : MonoBehaviour {
         } else {
             ghostBlock = Instantiate(Ghosts[nextBlock], currBlock.transform.position, Quaternion.identity);
         }
+        ghostBlock.transform.RotateAround(ghostBlock.transform.TransformPoint(ghostBlock.rotationPoint), Vector3.forward, nextRot);
+
         print("newghostend");
 }
 
