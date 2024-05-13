@@ -34,7 +34,3 @@ If you push the space bar, a Tetromino drops instantly to where the Ghost Piece 
 ### Background Music and Sound effect
 Implement the classic BGM as well as the sound effects for Tetris arcade version.
 
-## Demo
-![demo]
-
-[demo]: screenshots/demo.gif
