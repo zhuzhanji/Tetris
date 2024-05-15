@@ -7,6 +7,8 @@ This is a project based on hyunuk/Tetris.
 
 <img src="https://github.com/zhuzhanji/Tetris/assets/37281560/35687c64-7a23-4d87-b927-20c3a545d6c7" width="600" height="600" />
 
+<img width="423" alt="image" src="https://github.com/zhuzhanji/Tetris/assets/37281560/8fbdf172-71eb-4dc4-a768-257408a565c4">
+
 * Random rotation of shapes
 * Asynchronous dropping down and spring-like collision after row elimination.
 
